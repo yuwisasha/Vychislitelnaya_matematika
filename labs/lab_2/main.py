@@ -6,52 +6,46 @@ import numpy as np
 from labs.drawer import Drawer
 
 TOL = 1e-4  # tolerance
-MAX_ITERATIONS = 1000
+MAX_ITERATIONS = 100
 
 
 def f(x: float) -> float:
-    # print(x)
     y = math.log(x) - math.tan(x)
 
     return y
 
 
-def muller_method(left: float, center: float, right: float, /) -> ...:
-    x0, x1, x2 = left, right, center
+def muller_method(a: float, b: float, /) -> ...:
+    k = 0
+    x_k = 0
 
-    h1 = x1 - x0
-    h2 = x2 - x1
-    e1 = (f(x1) - f(x0)) / h1
-    e2 = (f(x2) - f(x1)) / h2
-    d = (e2 - e1) / (h2 + h1)
-    k = 2
-
-    while k <= MAX_ITERATIONS:
-        b = e2 + h2 * d
-        D = (b**2 - 4 * f(x2) * d) ** 1 / 2
-
-        if abs(b - D) < abs(b + d):
-            E = b + D
-        else:
-            E = b - D
-
-        h = -2 * f(x2) / E
-        p = x2 + h
-
-        if abs(h) < TOL:
-            # print(p, k, f(p), E)
-            print(f"x(k) = {p}\nk = {k}\nf(x(k)) = {f(p)}\nE = {TOL}")
-            return
-
-        x0 = x1
-        x1 = x2
-        x2 = p
-        h1 = x1 - x0
-        h2 = x2 - x1
-        e1 = (f(x1) - f(x0)) / h1
-        e2 = (f(x2) - f(x1)) / h2
-        d = (e2 - e1) / (h2 - h1)
+    while True:
         k += 1
+        c = (a + b) / 2
+        fa, fb, fc = f(a), f(b), f(c)
+        A = (((fb - fc) / (b - c)) - ((fc - fa) / (c - a))) / (b - a)
+        B = ((fc - fa) / (c - a)) + A * (a - c)
+        C = fa
+
+        x1 = a - ((2 * C) / (B + np.sqrt(B**2 - 4 * A * C)))
+        x2 = a - ((2 * C) / (B - np.sqrt(B**2 - 4 * A * C)))
+
+        if (a <= x1 <= b) or (a >= x1 >= b):
+            x = x1
+        elif (a <= x2 <= b) or (a >= x2 >= b):
+            x = x2
+
+        if f(a) * f(x) < 0:
+            b = x
+        elif f(x) * f(b) < 0:
+            a = x
+
+        E = abs(x - x_k)
+        x_k = x
+
+        if E <= TOL:
+            print(f"x_k = {x}\nk = {k}\nf(x_k) = {f(x)}\nE = {E}")
+            break
 
 
 def main() -> None:
@@ -74,7 +68,7 @@ def main() -> None:
         ).split()
     ]
 
-    muller_method(a, (a + b) / 2, b)
+    muller_method(a, b)
 
 
 if __name__ == "__main__":
