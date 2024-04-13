@@ -17,7 +17,7 @@ def f(x: float) -> float:
 
 def muller_method(a: float, b: float, /) -> ...:
     k = 0
-    x_k = 0
+    x_k = (a + b) / 2
 
     while True:
         k += 1
@@ -35,9 +35,9 @@ def muller_method(a: float, b: float, /) -> ...:
         elif (a <= x2 <= b) or (a >= x2 >= b):
             x = x2
 
-        if f(a) * f(x) < 0:
+        if fa * f(x) < 0:
             b = x
-        elif f(x) * f(b) < 0:
+        elif f(x) * fb < 0:
             a = x
 
         E = abs(x - x_k)
