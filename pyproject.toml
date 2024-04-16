@@ -11,6 +11,7 @@ python = "^3.11"
 matplotlib = "^3.8.4"
 numpy = "^1.26.4"
 scipy = "^1.13.0"
+sympy = "^1.12"
 
 
 [tool.poetry.group.dev.dependencies]
